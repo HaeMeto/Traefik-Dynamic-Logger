@@ -1,6 +1,4 @@
 
-# traefik_dynamic_logger
-=======
 # Traefik Dynamic Logger
 
 This project provides a dynamic logging solution for Traefik, a popular reverse proxy and load balancer. The logger enables flexible log management and integration with Traefik's dynamic configuration features.
