@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    command:
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
+      - --providers.docker=true
+      - --experimental.localplugins.traefik_dynamic_logger.moduleName=github.com/yourname/traefik_dynamic_logger
+      - --experimental.localplugins.directory=/plugins-local
+      - --api.insecure=true
+      - --accesslog.filepath=/var/log/traefik/access.log
+      - --accesslog.format=json
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080" # dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ./plugins-local:/plugins-local:ro
+      - ./logs:/var/log/traefik
+    restart: unless-stopped
+
+  whoami:
+    image: traefik/whoami:v1.10
+    container_name: whoami
+    labels:
+      - "traefik.enable=true"
+    restart: unless-stopped
+
+  security-api:
+    image: python:3.12-slim
+    container_name: security-api
+    working_dir: /app
+    command: bash -lc "pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - ./security_api:/app
+      - ./geoip:/geoip:ro
+    environment:
+      - APP_ENV=prod
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - GEOIP_DB=/geoip/GeoLite2-City.mmdb
+    expose:
+      - "8000"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"

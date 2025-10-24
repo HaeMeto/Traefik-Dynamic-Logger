@@ -1,0 +1,25 @@
+http:
+  middlewares:
+    sec-logger:
+      plugin:
+        traefik_dynamic_logger:
+          apiEndpoint: "http://security-api:8000"
+          blockTTL: 300
+          maxBodyBytes: 65536
+          pathPrefix: ""
+          extraHeaders: "X-Env=prod"
+          # 🔽 Bisa diedit kapan saja → Traefik hot-reload
+          denyIPs: ["203.0.113.10","198.51.100.5"]
+          denyCountries: ["RU","BY"]
+          denyEmailDomains: ["spam.com","fraudmail.xyz"]
+          emailHeaders: ["X-Email","X-Forwarded-Email"]
+          countryHeader: "X-Sec-Country"
+          # Sinkron remote list (opsional)
+          listURL: "http://security-api:8000/lists"
+          refreshSeconds: 45
+
+    sec-auth:
+      forwardAuth:
+        address: "http://security-api:8000/auth"
+        trustForwardHeader: true
+        authResponseHeaders: ["X-Sec-Country","X-Sec-IP","X-Sec-Email"]

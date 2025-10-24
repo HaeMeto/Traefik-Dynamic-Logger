@@ -1,0 +1,27 @@
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+providers:
+  file:
+    directory: "/etc/traefik/dynamic"
+    watch: true
+  docker:
+    exposedByDefault: false
+
+log:
+  level: INFO
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  format: json
+
+experimental:
+  localPlugins:
+    traefik_dynamic_logger:
+      moduleName: "github.com/HaeMeto/traefik_dynamic_logger"
+
+api:
+  insecure: true    # dashboard on :8080 (expose via ports below)

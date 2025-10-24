@@ -1,0 +1,23 @@
+http:
+  routers:
+    # contoh router wildcard – pasang middleware
+    all-web:
+      rule: "HostRegexp(`{any:.+}`)"
+      entryPoints: ["web"]
+      service: whoami
+      middlewares:
+        - sec-logger
+
+    all-websecure:
+      rule: "HostRegexp(`{any:.+}`)"
+      entryPoints: ["websecure"]
+      service: whoami
+      middlewares:
+        - sec-logger
+      tls: {}  # gunakan TLS jika sudah siapkan cert resolver
+
+  services:
+    whoami:
+      loadBalancer:
+        servers:
+          - url: "http://whoami:80"

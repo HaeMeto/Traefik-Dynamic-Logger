@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+# traefik_dynamic_logger
+=======
+>>>>>>> a633511 (Add dynamic security logger middleware and update README)
 # Traefik Dynamic Logger
 
 This project provides a dynamic logging solution for Traefik, a popular reverse proxy and load balancer. The logger enables flexible log management and integration with Traefik's dynamic configuration features.
@@ -41,4 +47,9 @@ This project provides a dynamic logging solution for Traefik, a popular reverse 
 Contributions are welcome! Please open issues or submit pull requests for improvements or bug fixes.
 
 ## License
+<<<<<<< HEAD
 This project is licensed under the MIT License.
+=======
+This project is licensed under the MIT License.
+>>>>>>> 259eb39 (first commit)
+>>>>>>> a633511 (Add dynamic security logger middleware and update README)
