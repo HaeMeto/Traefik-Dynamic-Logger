@@ -61,7 +61,9 @@ celerybeat-schedule
 .env.*
 app/.env
 app/.env.*
-
+.venv
+.venv/*
+.venv/
 
 !app/log/.gitkeep
 # virtualenv

@@ -16,7 +16,8 @@ load_dotenv()
 
 # ---------- konfigurasi ----------
 APP_ENV = os.getenv("APP_ENV", "dev")
-LOG_PATH = os.getenv("SECURITY_LOG", "/var/log/security_api/log.json")
+
+LOG_PATH = os.getenv("SEC_LOG_PATH", "./logs/security_api.json")
 os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
 
 BRUTE_WINDOW_SEC = int(os.getenv("BRUTE_WINDOW_SEC", "300"))
