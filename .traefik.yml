@@ -1,0 +1,9 @@
+displayName: "Dynamic Security Logger"
+type: middleware
+import: github.com/yourname/traefik_dynamic_logger
+summary: >
+  Lightweight dynamic security middleware that logs metadata, body, headers,
+  and integrates with external API (e.g., CrowdSec/Python) for real-time blocking.
+testData:
+  apiEndpoint: "http://security-api:8000"
+  blockTTL: 300
