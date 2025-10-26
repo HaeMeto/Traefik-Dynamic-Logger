@@ -1,4 +1,4 @@
-displayName: "Dynamic Security Logger"
+displayName: Dynamic Security Logger
 type: middleware
 import: github.com/HaeMeto/traefik_dynamic_logger
 summary: '
