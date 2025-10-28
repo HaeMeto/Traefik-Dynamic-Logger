@@ -151,7 +151,7 @@ providers:
 plugins:
   Traefik-Dynamic-Logger:
     moduleName: "github.com/HaeMeto/Traefik-Dynamic-Logger"
-    version: "v0.1.0"
+    version: "v0.1.1"
 ```
 
 > Traefik will fetch the plugin via its Go module path and pin it to `v0.1.0`. Use your published tag.
