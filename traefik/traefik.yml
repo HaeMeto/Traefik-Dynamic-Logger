@@ -21,7 +21,7 @@ accessLog:
 experimental:
   localPlugins:
     traefik_dynamic_logger:
-      moduleName: "github.com/HaeMeto/traefik_dynamic_logger"
+      moduleName: "github.com/HaeMeto/Traefik-Dynamic-Logger"
 
 api:
   insecure: true    # dashboard on :8080 (expose via ports below)

@@ -61,8 +61,8 @@ Client → Traefik → [dynamic-logger middleware] → Upstream
 ### 1) Clone
 
 ```bash
-git clone https://github.com/HaeMeto/traefik_dynamic_logger.git
-cd traefik_dynamic_logger
+git clone https://github.com/HaeMeto/Traefik-Dynamic-Logger.git
+cd Traefik-Dynamic-Logger
 ```
 
 ### 2) (Optional) Build binaries / run API
@@ -104,13 +104,13 @@ providers:
     watch: true
 
 localPlugins:
-  traefik_dynamic_logger:
-    moduleName: "github.com/HaeMeto/traefik_dynamic_logger"
+  Traefik-Dynamic-Logger:
+    moduleName: "github.com/HaeMeto/Traefik-Dynamic-Logger"
 ```
 
 **Container layout (Docker):** mount the plugin source into Traefik’s expected path:
 ```
-/plugins-local/src/github.com/HaeMeto/traefik_dynamic_logger/...
+/plugins-local/src/github.com/HaeMeto/Traefik-Dynamic-Logger/...
 ```
 
 **`docker-compose.yml` (excerpt):**
@@ -125,7 +125,7 @@ services:
       - "--entrypoints.websecure.address=:443"
     volumes:
       - ./traefik/dynamic:/etc/traefik/dynamic
-      - ./plugins-local/src/github.com/HaeMeto/traefik_dynamic_logger:/plugins-local/src/github.com/HaeMeto/traefik_dynamic_logger
+      - ./plugins-local/src/github.com/HaeMeto/Traefik-Dynamic-Logger:/plugins-local/src/github.com/HaeMeto/Traefik-Dynamic-Logger
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
       - "80:80"
@@ -149,8 +149,8 @@ providers:
     watch: true
 
 plugins:
-  traefik_dynamic_logger:
-    moduleName: "github.com/HaeMeto/traefik_dynamic_logger"
+  Traefik-Dynamic-Logger:
+    moduleName: "github.com/HaeMeto/Traefik-Dynamic-Logger"
     version: "v0.1.0"
 ```
 
@@ -168,9 +168,9 @@ http:
     dynamic-logger:
       plugin:
         # Use the same key you configured in static:
-        # - localPlugins: traefik_dynamic_logger
-        # - plugins:      traefik_dynamic_logger
-        traefik_dynamic_logger:
+        # - localPlugins: Traefik-Dynamic-Logger
+        # - plugins:      Traefik-Dynamic-Logger
+        Traefik-Dynamic-Logger:
           logLevel: "info"         # debug|info|warn|error
           logFormat: "json"        # json|text
           suspiciousPaths:
@@ -200,7 +200,7 @@ http:
 ```
 
 **Notes**
-- The plugin name under `plugin:` **must match** your static config key (`traefik_dynamic_logger`).
+- The plugin name under `plugin:` **must match** your static config key (`Traefik-Dynamic-Logger`).
 - Keep `watch: true` on the file provider for hot reloads.
 - You can also declare this middleware globally on entryPoints if desired.
 
