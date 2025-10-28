@@ -1,0 +1,23 @@
+{
+  "patterns": [
+    "\\bunion\\s+select\\b",
+    "\\bdrop\\s+table\\b",
+    "<\\s*script\\b",
+    "\\bsleep\\s*\\(",
+    "\\bor\\s+1\\s*=\\s*1\\b",
+    "etc/passwd",
+    "\\bselect\\b.+\\bfrom\\b",
+    "\\bupdate\\b.+\\bset\\b",
+    "\\bdelete\\b.+\\bfrom\\b",
+    "\\bwget\\b|\\bcurl\\b"
+  ],
+  "sus_paths": [
+    "/wp-admin",
+    "/wp-login.php",
+    "/phpmyadmin",
+    "/.env",
+    "/admin",
+    "/.git",
+    "/.git/config"
+  ]
+}

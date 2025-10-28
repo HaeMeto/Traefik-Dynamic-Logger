@@ -8,9 +8,9 @@ import ipaddress
 import re
 from typing import Any, Dict, Optional
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from pydantic import BaseModel
-
+from typing import List
 # load env dulu supaya LOG_PATH / konfigurasi tersedia
 load_dotenv()
 
@@ -19,6 +19,9 @@ APP_ENV = os.getenv("APP_ENV", "dev")
 
 LOG_PATH = os.getenv("SEC_LOG_PATH", "./logs/security_api.json")
 os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
+
+# path file rules (bisa di-override lewat ENV)
+RULES_PATH = os.getenv("RULES_PATH", os.path.join(os.path.dirname(__file__), "rules.json"))
 
 BRUTE_WINDOW_SEC = int(os.getenv("BRUTE_WINDOW_SEC", "300"))
 BRUTE_MAX_ATTEMPTS = int(os.getenv("BRUTE_MAX_ATTEMPTS", "30"))
@@ -34,12 +37,55 @@ BLOCK_EMAIL_DOMAINS = {d.lower() for d in _env_set("BLOCK_EMAIL_DOMAINS")}
 BLOCK_IPS = _env_set("BLOCK_IPS")
 
 # patterns & suspicious paths (simple heuristics)
-PATTERNS = [
+_DEFAULT_PATTERNS  = [
     r"(?i)\bunion\s+select\b", r"(?i)\bdrop\s+table\b", r"(?i)<\s*script\b",
     r"(?i)\bsleep\s*\(", r"(?i)\bor\s+1\s*=\s*1\b", r"(?i)etc/passwd",
     r"(?i)\bselect\b.+\bfrom\b", r"(?i)\bupdate\b.+\bset\b", r"(?i)\bdelete\b.+\bfrom\b",
 ]
-SUS_PATH = ["/wp-admin", "/wp-login.php", "/phpmyadmin", "/.env", "/admin"]
+_DEFAULT_SUS_PATH  = ["/wp-admin", "/wp-login.php", "/phpmyadmin", "/.env", "/admin"]
+# runtime holders
+_PATTERNS_RAW: List[str] = []
+_PATTERNS_COMPILED: List[re.Pattern] = []
+_SUS_PATHS: List[str] = []
+
+def load_rules(path: str = RULES_PATH) -> None:
+    """Load rules from JSON file. On error, fallback to built-in defaults."""
+    global _PATTERNS_RAW, _PATTERNS_COMPILED, _SUS_PATHS
+    try:
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            patt = data.get("patterns", [])
+            sus = data.get("sus_paths", [])
+            # allow non-list entries gracefully
+            if not isinstance(patt, list):
+                patt = []
+            if not isinstance(sus, list):
+                sus = []
+            _PATTERNS_RAW = [str(p).strip() for p in patt if str(p).strip()]
+            _SUS_PATHS = [str(p).strip() for p in sus if str(p).strip()]
+        else:
+            # file not found -> use defaults
+            _PATTERNS_RAW = _DEFAULT_PATTERNS[:]
+            _SUS_PATHS = _DEFAULT_SUS_PATH[:]
+    except Exception as e:
+        # on any error fallback to defaults and log
+        json_log({"event": "rules_load_error", "path": path, "error": str(e)})
+        _PATTERNS_RAW = _DEFAULT_PATTERNS[:]
+        _SUS_PATHS = _DEFAULT_SUS_PATH[:]
+
+    # compile regexes (IGNORECASE)
+    compiled = []
+    for p in _PATTERNS_RAW:
+        try:
+            compiled.append(re.compile(p, re.IGNORECASE))
+        except re.error as re_err:
+            json_log({"event": "rules_compile_error", "pattern": p, "error": str(re_err)})
+    _PATTERNS_COMPILED = compiled
+    json_log({"event": "rules_loaded", "patterns": len(_PATTERNS_COMPILED), "sus_paths": len(_SUS_PATHS)})
+
+
+
 
 # ---------- logging (JSONL) ----------
 logging.basicConfig(filename=LOG_PATH, level=logging.INFO, format="%(message)s")
@@ -221,6 +267,9 @@ def set_list(name: str, values: list) -> None:
 # ---------- FastAPI endpoints ----------
 app = FastAPI(title="Security API", version="1.0.0")
 
+# initial load at startup
+load_rules()
+
 class LogModel(BaseModel):
     ip: Optional[str] = None
     method: Optional[str] = None
@@ -281,8 +330,8 @@ async def log_endpoint(data: LogModel, request: Request):
     count = incr_bruteforce(ip)
 
     # heuristics
-    hit_sus_path = any(path.startswith(p) for p in SUS_PATH)
-    hit_sig = any(re.search(p, body) for p in PATTERNS)
+    hit_sus_path = any(path.startswith(p) for p in _SUS_PATHS)
+    hit_sig = any(p.search(body or "") for p in _PATTERNS_COMPILED)
 
     if hit_sig or (hit_sus_path and count > BRUTE_MAX_ATTEMPTS):
         if r and hit_sig and count > BRUTE_MAX_ATTEMPTS * 2:
@@ -340,3 +389,14 @@ def update_lists(p: ListsPayload):
         set_list(LIST_KEY_EM, [e.strip().lower() for e in p.emails if e and e.strip()])
     json_log({"event": "lists_update", "ips": p.ips, "countries": p.countries, "emails": p.emails})
     return {"ok": True}
+
+@app.post("/reload-rules")
+def reload_rules():
+    """
+    Reload rules from RULES_PATH. Berguna untuk dev / update tanpa restart.
+    """
+    try:
+        load_rules()
+        return {"ok": True, "patterns": len(_PATTERNS_COMPILED), "sus_paths": len(_SUS_PATHS)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
