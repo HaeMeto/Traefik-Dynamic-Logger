@@ -1,17 +1,27 @@
 displayName: Dynamic Security Logger
 type: middleware
-import: github.com/HaeMeto/Traefik-Dynamic-Logger
-summary: "Lightweight dynamic middleware - log metadata/headers/body (size-limited),send to external API, local TTL block, and dynamic deny lists (IP/country/email) via Traefik dynamic config or remote list sync."
+import: github.com/HaeMeto/traefik_dynamic_logger
+summary: >-
+  Lightweight dynamic middleware—logs metadata, headers, and request body (size-limited); sends
+  events to an external API; supports local TTL blocks; and dynamic deny-lists (IP, country, email)
+  via Traefik dynamic config or remote list sync.
 testData:
-  apiEndpoint: "http://security-api:8000"
+  apiEndpoint: http://security-api:8000
   blockTTL: 300
   maxBodyBytes: 65536
   pathPrefix: ""
   extraHeaders: ""
-  denyIPs: ["1.2.3.4"]
-  denyCountries: ["RU","CN"]
-  denyEmailDomains: ["spam.com","bad.tld"]
-  emailHeaders: ["X-Email","X-Forwarded-Email"]
-  countryHeader: "X-Sec-Country"
-  listURL: "http://security-api:8000/lists"
+  denyIPs:
+    - 1.2.3.4
+  denyCountries:
+    - RU
+    - CN
+  denyEmailDomains:
+    - spam.com
+    - bad.tld
+  emailHeaders:
+    - X-Email
+    - X-Forwarded-Email
+  countryHeader: X-Sec-Country
+  listURL: http://security-api:8000/lists
   refreshSeconds: 60
