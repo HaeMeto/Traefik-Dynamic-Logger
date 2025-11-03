@@ -339,5 +339,4 @@ Issues and PRs are welcome! Please include a clear description, steps to reprodu
 ---
 
 ## License
-
-MIT © HaeMeto. See [`LICENSE`](LICENSE).
+Open Source
