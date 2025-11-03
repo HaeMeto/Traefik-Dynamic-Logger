@@ -1,3 +1,3 @@
-module github.com/HaeMeto/Traefik-Dynamic-Logger
+module github.com/HaeMeto/traefik_dynamic_logger
 
 go 1.21
