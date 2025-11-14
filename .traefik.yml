@@ -1,27 +1,30 @@
-displayName: Dynamic Security Logger
-type: middleware
+---
+displayName: "Dynamic Security Logger"
+type: "middleware"
 
-import: github.com/HaeMeto/traefik_dynamic_logger
+import: "github.com/HaeMeto/traefik_dynamic_logger"
 
-summary: Lightweight dynamic middleware—logs metadata, headers, and request body-size-limited
+summary: >
+  Lightweight dynamic middleware that logs metadata, headers, and a
+  size-limited request body.
 
 testData:
-  apiEndpoint: http://security-api:8000
+  apiEndpoint: "http://security-api:8000"
   blockTTL: 300
   maxBodyBytes: 65536
   pathPrefix: ""
   extraHeaders: ""
   denyIPs:
-    - 1.2.3.4
+    - "1.2.3.4"
   denyCountries:
-    - RU
-    - CN
+    - "RU"
+    - "CN"
   denyEmailDomains:
-    - spam.com
-    - bad.tld
+    - "spam.com"
+    - "bad.tld"
   emailHeaders:
-    - X-Email
-    - X-Forwarded-Email
-  countryHeader: X-Sec-Country
-  listURL: http://security-api:8000/lists
+    - "X-Email"
+    - "X-Forwarded-Email"
+  countryHeader: "X-Sec-Country"
+  listURL: "http://security-api:8000/lists"
   refreshSeconds: 60
