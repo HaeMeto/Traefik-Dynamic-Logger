@@ -1,7 +1,8 @@
 displayName: Dynamic Security Logger
 type: middleware
+iconPath: .assets/icon.png
 
-import: "github.com/HaeMeto/traefik_dynamic_logger"
+import: github.com/HaeMeto/traefik_dynamic_logger
 
 summary: Lightweight dynamic middleware that logs all Data
 
