@@ -1,12 +1,9 @@
----
-displayName: "Dynamic Security Logger"
-type: "middleware"
+displayName: Dynamic Security Logger
+type: middleware
 
 import: "github.com/HaeMeto/traefik_dynamic_logger"
 
-summary: >
-  Lightweight dynamic middleware that logs metadata, headers, and a
-  size-limited request body.
+summary: Lightweight dynamic middleware that logs all Data
 
 testData:
   apiEndpoint: "http://security-api:8000"
