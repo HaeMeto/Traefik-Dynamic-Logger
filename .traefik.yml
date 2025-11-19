@@ -12,17 +12,10 @@ testData:
   maxBodyBytes: 65536
   pathPrefix: ""
   extraHeaders: ""
-  denyIPs:
-    - "1.2.3.4"
-  denyCountries:
-    - "RU"
-    - "CN"
-  denyEmailDomains:
-    - "spam.com"
-    - "bad.tld"
-  emailHeaders:
-    - "X-Email"
-    - "X-Forwarded-Email"
+  denyIPs: ["203.0.113.10","198.51.100.5"]
+  denyCountries: ["RU","BY"]
+  denyEmailDomains: ["spam.com","fraudmail.xyz"]
+  emailHeaders: ["X-Email","X-Forwarded-Email"]
   countryHeader: "X-Sec-Country"
   listURL: "http://security-api:8000/lists"
   refreshSeconds: 60
